@@ -6,7 +6,7 @@ import turtle
 # Configuración de la ventana
 ventana = turtle.Screen()
 ventana.title("ARCADE PONG by Ivan Pascual")
-ventana.bgcolor("lightgreen")
+ventana.bgcolor("black")
 ventana.setup(width=800, height=600)
 ventana.tracer(0)       # No se actualiza la ventana, a no ser que lo indiquemos
 
@@ -14,7 +14,7 @@ ventana.tracer(0)       # No se actualiza la ventana, a no ser que lo indiquemos
 paleta_izquierda = turtle.Turtle()
 paleta_izquierda.speed(0)   # Velocidad inicial 0
 paleta_izquierda.shape("square")
-paleta_izquierda.color("white")
+paleta_izquierda.color("blue")
 paleta_izquierda.shapesize(stretch_wid=5, stretch_len=1)
 paleta_izquierda.penup()    # Elimina la linea desde el inicio
 paleta_izquierda.goto(-380, 0)      # Posicion inicial
@@ -23,7 +23,7 @@ paleta_izquierda.goto(-380, 0)      # Posicion inicial
 paleta_derecha = turtle.Turtle()
 paleta_derecha.speed(0)     # Velocidad inicial 0
 paleta_derecha.shape("square")
-paleta_derecha.color("white")
+paleta_derecha.color("orange")
 paleta_derecha.shapesize(stretch_wid=5, stretch_len=1)
 paleta_derecha.penup()    # Elimina la linea desde el inicio
 paleta_derecha.goto(380, 0)      # Posicion inicial
@@ -35,8 +35,8 @@ pelota.shape("circle")
 pelota.color("white")
 pelota.penup()
 pelota.goto(0, 0)
-pelota.dx = 2   # Velocidadc en el eje x
-pelota.dy = 2   # Velocidad en el eje y
+pelota.dx = 0.125   # Velocidad en el eje x
+pelota.dy = 0.125   # Velocidad en el eje y
 
 # Funciones para mover las paletas
 def paleta_izquierda_arriba():
@@ -79,7 +79,6 @@ def paleta_derecha_abajo():
         y -= 10
     paleta_derecha.sety(y)    # Defino la nueva coordenada del eje y
 
-
 # Configuracion para controlar las paletas
 ventana.listen()
 ventana.onkeypress(paleta_izquierda_arriba, "w")
@@ -91,3 +90,37 @@ ventana.onkeypress(paleta_derecha_abajo, "Down")
 while True:
     # Actualizamos la ventana
     ventana.update()
+
+    # Mover la pelota
+    pelota.setx(pelota.xcor() + pelota.dx)
+    pelota.sety(pelota.ycor() + pelota.dy)
+
+    # Colisiones con los bordes superiores e inferiores
+    if pelota.ycor() > 290:
+        pelota.sety(290)
+        pelota.dy *= -1
+
+    if pelota.ycor() < -290:
+        pelota.sety(-290)
+        pelota.dy *= -1
+
+    # Colision con la paleta derecha
+    if (pelota.dx > 0) and (380 > pelota.xcor() > 370) and (paleta_derecha.ycor() + 50 > pelota.ycor() > paleta_derecha.ycor() - 50):
+        pelota.color("orange")    
+        pelota.dx *= -1     # cambio la direccion
+
+    # Colision con la paleta izquierda
+    elif (pelota.dx < 0) and (-380 < pelota.xcor() < -370) and (paleta_izquierda.ycor() + 50 > pelota.ycor() > paleta_izquierda.ycor() - 50):
+        pelota.color("blue")
+        pelota.dx *= -1     # cambio la direccion
+    
+    # Punto cuando la pelota sale de la pantalla
+    if pelota.xcor() > 390:
+        pelota.color("white")
+        pelota.goto(0, 0)   # vuelve al inicio
+        pelota.dx *= -1     # cambia de direccion
+
+    elif pelota.xcor() < -390:
+        pelota.color("white")
+        pelota.goto(0, 0)   # vuelve al inicio
+        pelota.dx *= -1     # cambia de direccion
